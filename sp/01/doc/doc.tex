@@ -46,7 +46,7 @@
 
 \lstset{
     frame=tb,
-    language=C,
+    language=XML,
     aboveskip=3mm,
     belowskip=3mm,
     showstringspaces=false,
@@ -119,4 +119,64 @@ Pro takového investora je důležité, aby všechny informace o nákupech byly 
 Dále je také nutné, aby ke každému obchodu byla přiřazena informace v jaké měně byl uskutečněn. Toto se nejčastěji reprezentuje pomocí tzv. \textit{obchodních párů}, které se skládají z měny (např. USD) a dané komodity (např. BTC).
 
 Pomocí takto popsaného nástroje (databáze), který tento problém řeší, si investor může např. svá portfólia porovnat oproti aktuálnímu kurzu kryptoměn, a zjistit jak se jeho obchodům daří. Takový nástroj by také našel využití i při vyplňování daňového přiznání.
-\end{document}    
+
+\section{Popis datové struktury}
+
+V databázi jsou definovány obchodní páry skládající se ze jména komodity, zkratky komodity a měně, ve které se buda daná komodita obchodovat. Dále se v databázi nachází seznam portfólií, které jsou popsány identifikátorem, názvem a popisem. V těchto portfóliích se dále mohou vyskytovat jednotlivé obchody, které nesou základní informace o uskutečněném nákupu a odkazují se na obchodní pár.
+
+\subsection{Obchodní páry}
+Seznam obchodních páru se vyskytuje v prvku \texttt{trading-pairs}. Jednotlivé obchodní páry jsou reprezentovány prvkami \texttt{trading-pair} a v atributu \texttt{id} se nachází jejich identifikátory. V tomto prvku se pak dále vyskytují následující prvky popisující obchodní pár:
+
+\begin{itemize}
+    \item \texttt{name} - název kryptoměny v obchodním páru
+    \item \texttt{symbol} - zkratka názvu kryptoměny v obchodním páru 
+    \item \texttt{currency} - zkratka měny v obchodním páru 
+\end{itemize}
+
+
+\begin{lstlisting}
+<trading-pairs>
+    <trading-pair id="1">
+        <name>Bitcoin</name>
+        <symbol>BTC</symbol>
+        <currency>USD</currency>
+    </trading-pair>
+    <trading-pair id="2">
+        <name>Litecoin</name>
+        <symbol>LTC</symbol>
+        <currency>EUR</currency>
+    </trading-pair>
+</trading-pairs>
+\end{lstlisting}
+
+\subsection{Portfólia}
+Seznam portfólií se vyskytuje v prvku \texttt{portfolios}. Jednotlivá portfólia jsou reprezentována prvkami \texttt{portfolio} a v atributu \texttt{id} se nachází jejich identifikátory. Tyto prvky dále obsahují následující atributy:
+
+\begin{itemize}
+    \item \texttt{name} - pojmenování portfólia
+    \item \texttt{description} - vlastní popis portfólia
+\end{itemize}
+
+Pokud se v daném portfóliu vyskytují nějaké obchody, tak jsou reprezentovány prvkami \texttt{order} ve vnořeném prvku \texttt{orders}.
+
+Důležité je zmínit, že napříč více XML soubory v databázi se může vyskytovat prvek popisující jedno portfólio i více než jednou. Toto je způsobené tím, že jednotlivé nákupy portfólia se nachází v různých XML souborech. Avšak název a popis jednoho portfólia by se měl vyskytovat v XML souborech pouze jednou.
+
+\begin{lstlisting}
+<portfolios>
+    <portfolio id="1" name="Main Portfolio" description="Tracking Bitcoin/Ethereum transactions">
+        <orders>
+            ...
+        </orders>
+    </portfolio>
+    <portfolio id="2" name="Altcoin Portfolio" description="Tracking altcoin portfolio">
+        <orders>
+            ...
+        </orders>
+    </portfolio>
+    <portfolio id="3" name="Parents portfolio" description="Tracking investments of my parents"/>
+</portfolios>
+
+\end{lstlisting}
+
+
+\end{document} 
