@@ -1,0 +1,20 @@
+<crypto-tracker>
+    <portfolios>
+        <portfolio id="3">
+            <orders>
+                <order trading-pair="1">
+                    <size>11200</size>
+                    <price>0.01</price>
+                    <fee>1.2</fee>
+                    <timestamp>1618675161</timestamp>
+                </order>
+                <order trading-pair="2" sell="true">
+                    <size>1</size>
+                    <price>90</price>
+                    <fee>0.2</fee>
+                    <timestamp>1618675511</timestamp>
+                </order>
+            </orders>  
+        </portfolio>
+    </portfolios>
+</crypto-tracker>

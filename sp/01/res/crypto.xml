@@ -1,0 +1,62 @@
+<crypto-tracker>
+
+    <trading-pairs>
+        <trading-pair id="1">
+            <name>Bitcoin</name>
+            <symbol>BTC</symbol>
+            <currency>USD</currency>
+        </trading-pair>
+        <trading-pair id="2">
+            <name>Litecoin</name>
+            <symbol>LTC</symbol>
+            <currency>USD</currency>
+        </trading-pair>
+        <trading-pair id="3">
+            <name>Ethereum</name>
+            <symbol>ETH</symbol>
+            <currency>EUR</currency>
+        </trading-pair>
+        <trading-pair id="4">
+            <name>Cardano</name>
+            <symbol>ADA</symbol>
+            <currency>USD</currency>
+        </trading-pair>
+    </trading-pairs>
+
+    <portfolios>
+        <portfolio id="1" name="Main Portfolio" description="Tracking Bitcoin/Ethereum transactions">
+            <orders>
+                <order trading-pair="1">
+                    <size>0.11</size>
+                    <price>20000</price>
+                    <fee>0.11</fee>
+                    <timestamp>1618675561</timestamp>
+                </order>
+                <order trading-pair="1" sell="true">
+                    <size>0.30</size>
+                    <price>20900</price>
+                    <fee>0.22</fee>
+                    <timestamp>1618675531</timestamp>
+                </order>
+            </orders>  
+        </portfolio>
+        <portfolio id="2" name="Altcoin Portfolio" description="Tracking altcoin portfolio">
+            <orders>
+                <order trading-pair="4">
+                    <size>10000</size>
+                    <price>0.16</price>
+                    <fee>1</fee>
+                    <timestamp>1618675561</timestamp>
+                </order>
+                <order trading-pair="2" sell="true">
+                    <size>5</size>
+                    <price>230</price>
+                    <fee>3</fee>
+                    <timestamp>1618675531</timestamp>
+                </order>
+            </orders>  
+        </portfolio>
+        <portfolio id="3" name="Parents' portfolio" description="Tracking investments of my parents"/>
+    </portfolios>
+
+</crypto-tracker>

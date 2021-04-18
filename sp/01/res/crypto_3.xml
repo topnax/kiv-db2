@@ -1,0 +1,28 @@
+<crypto-tracker>
+    <trading-pairs>
+        <trading-pair id="5">
+            <name>Polkadot</name>
+            <symbol>DOT</symbol>
+            <currency>USD</currency>
+        </trading-pair>
+    </trading-pairs>
+
+    <portfolios>
+        <portfolio id="2">
+            <orders>
+                <order trading-pair="5">
+                    <size>30</size>
+                    <price>32</price>
+                    <fee>2</fee>
+                    <timestamp>1618611161</timestamp>
+                </order>
+                <order trading-pair="2">
+                    <size>9</size>
+                    <price>202</price>
+                    <fee>1.5</fee>
+                    <timestamp>1618679531</timestamp>
+                </order>
+            </orders>  
+        </portfolio>
+    </portfolios>
+</crypto-tracker>
