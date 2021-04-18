@@ -178,5 +178,34 @@ Důležité je zmínit, že napříč více XML soubory v databázi se může vy
 
 \end{lstlisting}
 
+\subsection{Uskutečněné obchody}
+Seznam obchodů daného portfólia se nachází v prvku \texttt{orders} vyskytujícím se v prvku \texttt{portfolio}, jež označuje portfólio, do kterého patří. Jednotlivé položky seznamnu obchodů jsou reprezentovány prvky typu \texttt{order}, jehož atribut \texttt{trading-pair} obsahuje identifikátor obchodního páru, kterého se týká. Prvek \texttt{order} obsahuje následující atributy: 
+\begin{itemize}
+    \item \texttt{size} - množství kryptoměny, která byla obchodována
+    \item \texttt{price} - cena za jednu minci kryptoměny
+    \item \texttt{fee} - poplatek za uskutečněný nákup
+    \item \texttt{timestamp} - datum a čas, kdy se nákup uskutečnil ve formátu UNIX Timestamp
+\end{itemize}
+
+Pokud daný obchod představoval prodej, tak prvek \texttt{order} obsahuje atribut \texttt{sell} nastavený na hodnotu \texttt{true}.
+
+\begin{lstlisting}
+<orders>
+    <order trading-pair="4">
+        <size>10000</size>
+        <price>0.16</price>
+        <fee>1</fee>
+        <timestamp>1618675561</timestamp>
+    </order>
+    <order trading-pair="2" sell="true">
+        <size>5</size>
+        <price>230</price>
+        <fee>3</fee>
+        <timestamp>1618675531</timestamp>
+    </order>
+</orders>
+\end{lstlisting}
+
+
 
 \end{document} 
