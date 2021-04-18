@@ -325,4 +325,20 @@ FROM crypto_orders_import_xml,
 
 Filtrování obchodů konkrétní burzy je realizováno pomocí SQL konstrukce \texttt{WHERE}.
 
+\section{Diskuze nad řešením v dané technologii}
+
+Jednotlivé soubory představují exportované informace o nákupech z různých burz. Problematické je to, že na jednom místě jsou definované všechny informace o portfóliu (název a popis), avšak v dalších XML souborech, ve kterých se nachází další nákupy patřící do daného portfólia, je toto portfólio referencováno stejným prvkem, avšak atributy pro specifikaci názvu a popisu jsou vynechány. Portfólio je referencováno pomocí jeho identifikátoru. XML databáze pak pomalu degraduje na relační databázi a mohou vznikat konflikty, kdy jedno portfólio bude mít název a popis specifikovaný na různých místech.
+
+Struktura řešení je navržena tak, že identifikátory, reference a popisy portfólií se nacházejí v atributech. 
+
+Datový formát pro uložení dat z této domény je vhodný spíše pro jednorázové zpracování a následné uložení do jiného formátu, nikoliv jako pro implementaci hlavního úložiště.
+
+Limitace dotazování spočívá v tom, že obchodovací páry v jednotlivých obchodech jsou referencovány přes ID, a tak není možné v rámci jednoho dotazu získat obchody včetně příslušných obchodních párů.
+
+Mezi vhodná metadata při ukládání do relační databáze patří datum exportu z burzy a zdroj, ze kterého export pochází.
+
+Jako jediný nepovinný údaj se v databázové struktuře používá atribut \texttt{sell}, který označuje prodeje. Jeho přítomnost není problematická.
+
+
+
 \end{document} 
