@@ -122,15 +122,15 @@ Pomocí takto popsaného nástroje (databáze), který tento problém řeší, s
 
 \section{Popis datové struktury}
 
-V databázi jsou definovány obchodní páry skládající se ze jména komodity, zkratky komodity a měně, ve které se buda daná komodita obchodovat. Dále se v databázi nachází seznam portfólií, které jsou popsány identifikátorem, názvem a popisem. V těchto portfóliích se dále mohou vyskytovat jednotlivé obchody, které nesou základní informace o uskutečněném nákupu a odkazují se na obchodní pár. Kořenovým prvkem každého XML souboru je prvek \texttt{crypto-tracker}.
+V databázi jsou definovány obchodní páry skládající se ze jména komodity, zkratky komodity a měně, ve které se buda daná komodita obchodovat. Dále se v databázi nachází seznam portfólií, které jsou popsány identifikátorem, názvem a popisem. V těchto portfóliích se dále mohou vyskytovat jednotlivé obchody, které nesou základní informace o uskutečněném nákupu či prodeji a odkazují se na obchodní pár. Kořenovým prvkem každého XML souboru je prvek \texttt{crypto-tracker}.
 
 Jednotlivé XML soubory jsou uloženy v tabulce \texttt{crypto\_orders\_import\_xml}, která má následující strukturu:
 
 \begin{itemize}
-    \item \texttt{id} - identifikátor importu
-    \item \texttt{import\_data} - obsah souboru obsahující data pro import obchodů z burzy/směnárny ve formátu XML
-    \item \texttt{import\_timestamp} - časové razítko, kdy byl proveden import
-    \item \texttt{exchange} - název burzy/směnárny, ze které je prováděn import
+    \item \texttt{id} -- identifikátor importu
+    \item \texttt{import\_data} -- obsah souboru obsahující data pro import obchodů z burzy/směnárny ve formátu XML
+    \item \texttt{import\_timestamp} -- časové razítko, kdy byl proveden import
+    \item \texttt{exchange} -- název burzy/směnárny, ze které je prováděn import
 \end{itemize}
 
 
@@ -163,8 +163,8 @@ Seznam obchodních páru se vyskytuje v prvku \texttt{trading-pairs}. Jednotliv�
 Seznam portfólií se vyskytuje v prvku \texttt{portfolios}. Jednotlivá portfólia jsou reprezentována prvkami \texttt{portfolio} a v atributu \texttt{id} se nachází jejich identifikátory. Tyto prvky dále obsahují následující atributy:
 
 \begin{itemize}
-    \item \texttt{name} - pojmenování portfólia
-    \item \texttt{description} - vlastní popis portfólia
+    \item \texttt{name} -- pojmenování portfólia
+    \item \texttt{description} -- vlastní popis portfólia
 \end{itemize}
 
 Pokud se v daném portfóliu vyskytují nějaké obchody, tak jsou reprezentovány prvkami \texttt{order} ve vnořeném prvku \texttt{orders}.
@@ -191,10 +191,10 @@ Důležité je zmínit, že napříč více XML soubory v databázi se může vy
 \subsection{Uskutečněné obchody}
 Seznam obchodů daného portfólia se nachází v prvku \texttt{orders} vyskytujícím se v prvku \texttt{portfolio}, jež označuje portfólio, do kterého patří. Jednotlivé položky seznamnu obchodů jsou reprezentovány prvky typu \texttt{order}, jehož atribut \texttt{trading-pair} obsahuje identifikátor obchodního páru, kterého se týká. Prvek \texttt{order} obsahuje následující atributy: 
 \begin{itemize}
-    \item \texttt{size} - množství kryptoměny, která byla obchodována
-    \item \texttt{price} - cena za jednu minci kryptoměny
-    \item \texttt{fee} - poplatek za uskutečněný nákup
-    \item \texttt{timestamp} - datum a čas, kdy se nákup uskutečnil ve formátu UNIX Timestamp
+    \item \texttt{size} -- množství kryptoměny, která byla obchodována
+    \item \texttt{price} -- cena za jednu minci kryptoměny
+    \item \texttt{fee} -- poplatek za uskutečněný nákup
+    \item \texttt{timestamp} -- datum a čas, kdy se nákup uskutečnil ve formátu UNIX Timestamp
 \end{itemize}
 
 Pokud daný obchod představoval prodej, tak prvek \texttt{order} obsahuje atribut \texttt{sell} nastavený na hodnotu \texttt{true}.

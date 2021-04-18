@@ -255,7 +255,7 @@ VALUES (import_id.NEXTVAL,
 
 -- 1) Finds all orders within the portfolio with ID 1
 
-SELECT dotaz.*
+SELECT query.*
 FROM crypto_orders_import_xml,
      XMLTABLE('crypto-tracker/portfolios/portfolio[@id=1]/orders/order' PASSING import_data
               COLUMNS trading_pair_id NUMBER PATH '@trading-pair',
@@ -263,12 +263,12 @@ FROM crypto_orders_import_xml,
                   price NUMBER PATH 'price',
                   order_fee NUMBER PATH 'fee',
                   timestamp NUMBER PATH 'timestamp'
-         ) dotaz
+         ) query
 ;
 
--- 2) Finds all market prices of BTC orders within the portfolio with ID 1 with order size greater than 0.1
+-- 2) Finds BTC orders within the portfolio with ID 1 with order size greater than 0.1
 
-SELECT dotaz.*
+SELECT query.*
 FROM crypto_orders_import_xml,
      XMLTABLE('//portfolios/portfolio[@id=1]/orders/order[@trading-pair=1 and size >= 0.015]' PASSING import_data
               COLUMNS trading_pair_id NUMBER PATH '@trading-pair',
@@ -276,23 +276,23 @@ FROM crypto_orders_import_xml,
                   price NUMBER PATH 'price',
                   order_fee NUMBER PATH 'fee',
                   timestamp NUMBER PATH 'timestamp'
-         ) dotaz
+         ) query
 ;
 
 -- 3) Finds all USD trading pairs
 
-SELECT dotaz.*
+SELECT query.*
 FROM crypto_orders_import_xml,
      XMLTABLE('//trading-pairs/trading-pair[contains(currency, "USD")]' PASSING import_data
               COLUMNS currency VARCHAR(128) PATH 'currency',
                   symbol VARCHAR(128) PATH 'symbol',
                   name VARCHAR(128) PATH 'name'
-         ) dotaz
+         ) query
 ;
 
 -- 4) Finds last orders of all portfolio imports
 
-SELECT dotaz.*
+SELECT query.*
 FROM crypto_orders_import_xml,
      XMLTABLE('//portfolios/portfolio/orders/order[last()]' PASSING import_data
               COLUMNS trading_pair_id NUMBER PATH '@trading-pair',
@@ -300,12 +300,12 @@ FROM crypto_orders_import_xml,
                   price NUMBER PATH 'price',
                   order_fee NUMBER PATH 'fee',
                   timestamp NUMBER PATH 'timestamp'
-         ) dotaz
+         ) query
 ;
 
 -- 5) Finds all orders imported from Binance
 
-SELECT dotaz.*
+SELECT query.*
 FROM crypto_orders_import_xml,
      XMLTABLE('crypto-tracker/portfolios/portfolio/orders/order' PASSING import_data
               COLUMNS trading_pair_id NUMBER PATH '@trading-pair',
@@ -313,6 +313,6 @@ FROM crypto_orders_import_xml,
                   price NUMBER PATH 'price',
                   order_fee NUMBER PATH 'fee',
                   timestamp NUMBER PATH 'timestamp'
-         ) dotaz WHERE exchange = 'binance'
+         ) query WHERE exchange = 'binance'
 ;
 
