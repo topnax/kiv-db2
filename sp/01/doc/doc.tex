@@ -122,7 +122,17 @@ Pomocí takto popsaného nástroje (databáze), který tento problém řeší, s
 
 \section{Popis datové struktury}
 
-V databázi jsou definovány obchodní páry skládající se ze jména komodity, zkratky komodity a měně, ve které se buda daná komodita obchodovat. Dále se v databázi nachází seznam portfólií, které jsou popsány identifikátorem, názvem a popisem. V těchto portfóliích se dále mohou vyskytovat jednotlivé obchody, které nesou základní informace o uskutečněném nákupu a odkazují se na obchodní pár.
+V databázi jsou definovány obchodní páry skládající se ze jména komodity, zkratky komodity a měně, ve které se buda daná komodita obchodovat. Dále se v databázi nachází seznam portfólií, které jsou popsány identifikátorem, názvem a popisem. V těchto portfóliích se dále mohou vyskytovat jednotlivé obchody, které nesou základní informace o uskutečněném nákupu a odkazují se na obchodní pár. Kořenovým prvkem každého XML souboru je prvek \texttt{crypto-tracker}.
+
+Jednotlivé XML soubory jsou uloženy v tabulce \texttt{crypto\_orders\_import\_xml}, která má následující strukturu:
+
+\begin{itemize}
+    \item \texttt{id} - identifikátor importu
+    \item \texttt{import\_data} - obsah souboru obsahující data pro import obchodů z burzy/směnárny ve formátu XML
+    \item \texttt{import\_timestamp} - časové razítko, kdy byl proveden import
+    \item \texttt{exchange} - název burzy/směnárny, ze které je prováděn import
+\end{itemize}
+
 
 \subsection{Obchodní páry}
 Seznam obchodních páru se vyskytuje v prvku \texttt{trading-pairs}. Jednotlivé obchodní páry jsou reprezentovány prvkami \texttt{trading-pair} a v atributu \texttt{id} se nachází jejich identifikátory. V tomto prvku se pak dále vyskytují následující prvky popisující obchodní pár:
@@ -206,6 +216,113 @@ Pokud daný obchod představoval prodej, tak prvek \texttt{order} obsahuje atrib
 </orders>
 \end{lstlisting}
 
+\section{Popis dotazů nad databázovou strukturou}
+Ke zjištení užitečných informací o obchodování bylo vytvořeno 5 dotazů.
 
+\subsection{Vyhledání všech nákupů v daném portfóliu}
+Pro vyhledání všech nákupů patřících do nějakého portfólia slouží jednoduchý dotaz, ve kterém je vybrané portfólio specifikováno pomocí jeho identifikátoru. Výsledek dotazu pak obsahuje následující sloupce:
+
+\begin{itemize}
+    \item \texttt{order\_size} -- množství kryptoměny, která byla obchodována
+    \item \texttt{price} -- cena za jednu minci kryptoměny
+    \item \texttt{order\_fee} -- poplatek za uskutečněný nákup
+    \item \texttt{timestamp} -- datum a čas, kdy se nákup uskutečnil ve formátu UNIX Timestamp
+\end{itemize}
+
+\noindent
+Dotaz je formulován následovně:
+\begin{lstlisting}
+SELECT query.*
+FROM crypto_orders_import_xml,
+     XMLTABLE('crypto-tracker/portfolios/portfolio[@id=1]/orders/order' PASSING import_data
+              COLUMNS trading_pair_id NUMBER PATH '@trading-pair',
+                  order_size NUMBER PATH 'size',
+                  price NUMBER PATH 'price',
+                  order_fee NUMBER PATH 'fee',
+                  timestamp NUMBER PATH 'timestamp'
+         ) query
+;
+\end{lstlisting}
+
+
+\subsection{Vyhledání všech obchodů s kryptoměnou o větším než daném množství}
+Pro vyhledání všech nákupů patřících do nějakého portfólia, ve kterých se jednalo o minimální množství vybrané kryptoměny, slouží následující dotaz:
+
+\begin{lstlisting}
+SELECT query.*
+FROM crypto_orders_import_xml,
+     XMLTABLE('//portfolios/portfolio[@id=1]/orders/order[@trading-pair=1 and size >= 0.015]' PASSING import_data
+              COLUMNS trading_pair_id NUMBER PATH '@trading-pair',
+                  order_size NUMBER PATH 'size',
+                  price NUMBER PATH 'price',
+                  order_fee NUMBER PATH 'fee',
+                  timestamp NUMBER PATH 'timestamp'
+         ) query
+;
+\end{lstlisting}
+
+Vybraná kryptoměna je referencována identifikátorem obchodního páru.
+
+Struktura výsledku dotazu je stejná jako dotazu pro vyhledání všech nákupů v daném portfóliu.
+
+
+\subsection{Vyhledání všech obchodních párů skládajících se z konkrétní měny}
+Pro vyhledání všech obchodních párů, které se skládají z měny USD slouží následující dotaz:
+
+\begin{lstlisting}
+SELECT query.*
+FROM crypto_orders_import_xml,
+     XMLTABLE('//trading-pairs/trading-pair[contains(currency, "USD")]' PASSING import_data
+              COLUMNS currency VARCHAR(128) PATH 'currency',
+                  symbol VARCHAR(128) PATH 'symbol',
+                  name VARCHAR(128) PATH 'name'
+         ) query
+;
+
+\end{lstlisting}
+
+\noindent
+Výsledek takového dotazu se pak skládá z následujících sloupců:
+\begin{itemize}
+    \item \texttt{currency} -- zkratka měny v páru
+    \item \texttt{symbol} -- zkratka kryptoměny v páru
+    \item \texttt{name} -- název kryptoměny v páru
+\end{itemize}
+
+
+\subsection{Vyhledání posledních obchodů ze všech importů nákupů}
+Pro vyhledání všech posledních obchodů ve všech importech slouží následující dotaz, jehož výsledek má stejnou strukturu jako výsledek dotazu na všechny obchody:
+
+\begin{lstlisting}
+SELECT query.*
+FROM crypto_orders_import_xml,
+     XMLTABLE('//portfolios/portfolio/orders/order[last()]' PASSING import_data
+              COLUMNS trading_pair_id NUMBER PATH '@trading-pair',
+                  order_size NUMBER PATH 'size',
+                  price NUMBER PATH 'price',
+                  order_fee NUMBER PATH 'fee',
+                  timestamp NUMBER PATH 'timestamp'
+         ) query
+;
+\end{lstlisting}
+
+
+\subsection{Vyhledání obchodů z konkrétní burzy}
+Pro vyhledání všech obchodů z vybrané burzy slouží následující dotaz, jehož výsledek má stejnou strukturu jako výsledek dotazu na všechny obchody:
+
+\begin{lstlisting}
+SELECT query.*
+FROM crypto_orders_import_xml,
+     XMLTABLE('crypto-tracker/portfolios/portfolio/orders/order' PASSING import_data
+              COLUMNS trading_pair_id NUMBER PATH '@trading-pair',
+                  order_size NUMBER PATH 'size',
+                  price NUMBER PATH 'price',
+                  order_fee NUMBER PATH 'fee',
+                  timestamp NUMBER PATH 'timestamp'
+         ) query WHERE exchange = 'binance'
+;
+\end{lstlisting}
+
+Filtrování obchodů konkrétní burzy je realizováno pomocí SQL konstrukce \texttt{WHERE}.
 
 \end{document} 
