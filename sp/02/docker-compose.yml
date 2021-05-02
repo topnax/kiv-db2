@@ -1,0 +1,8 @@
+version: "3.3"
+services:
+  mongo:
+    container_name: dbmongo
+    image: mongo
+    volumes:
+      - ./resources:/resources
+
