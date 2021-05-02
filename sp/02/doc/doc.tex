@@ -218,7 +218,7 @@ Pokud daný obchod představoval prodej, tak prvek kolekce obsahuje atribut \tex
   }
 }\end{lstlisting}
 
-\section{Popis dotazů nad databázovou strukturou}
+\section{Popis vyhledávacích dotazů nad databázovou strukturou}
 Ke zjištení užitečných informací o obchodování bylo vytvořeno 7 dotazů.
 
 \subsection{Vyhledání všech portfólií obchodujících kryptoměnu ADA}
@@ -300,19 +300,52 @@ Výsledkem je dokument, který obsahuje následující atributy:
     \item \texttt{transactions} -- objekt obsahující kolekci dokumentů představujících transakce
 \end{itemize}
 
+
+\section{Popis dotazů upravujících databázi}
+Aby byla demonstrována úprava dokumentů databáze, tak byly vytvořeny 2 dotazy.
+
+\subsection{Změna vybraného obchodního páru ve všech transakcích}
+Pro změnu symbolu všech obchodních párů se symbolem \texttt{eth} na \texttt{eth2} ve všech transakcích lze použít následující dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+
+db.transactions.update({"tradingPair.symbol": "eth"}, {"$set": {"tradingPair.symbol":"eth2"}}, {"multi": true})
+
+\end{lstlisting}
+
+
+
+\subsection{Přidání obchodního páru do již existujícího portfólia}
+V případě požadavku na přidání dalšího obchodního páru do již existujícího portfólia lze použít tento dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+
+db.portfolios.update({"_id": 0}, {"$push": {"tradingPairs": {"symbol": "doge", "currency": "czk"}}})
+
+\end{lstlisting}
+
+Ukázkový dotaz přidá obchodní pár DOGE/CZK do portfólia specifikovaného pomocí identifikátoru \texttt{0}.
+
+
 \section{Diskuze nad řešením v dané technologii}
-k
-Jednotlivé soubory představují exportované informace o nákupech z různých burz. Problematické je to, že na jednom místě jsou definované všechny informace o portfóliu (název a popis), avšak v dalších XML souborech, ve kterých se nachází další nákupy patřící do daného portfólia, je toto portfólio referencováno stejným prvkem, avšak atributy pro specifikaci názvu a popisu jsou vynechány. Portfólio je referencováno pomocí jeho identifikátoru. XML databáze pak pomalu degraduje na relační databázi a mohou vznikat konflikty, kdy jedno portfólio bude mít název a popis specifikovaný na různých místech.
+Struktura dokumentů byla popsána v kapitole č. 2, kdy existují dva typy dokumentů: portfólia a transakce. 
 
-Struktura řešení je navržena tak, že identifikátory, reference a popisy portfólií se nacházejí v atributech. 
+V rámci řešení této práce byly vytvořeny 4 soubory obsahující kód v jazyce JavaScript, které slouží ke zjednodušení nahrávání dat do MongoDB databáze:
 
-Datový formát pro uložení dat z této domény je vhodný spíše pro jednorázové zpracování a následné uložení do jiného formátu, nikoliv jako pro implementaci hlavního úložiště.
+\begin{itemize}
+    \item \texttt{portfolios.js} -- soubor obsahující příkazy importující definovaná portfólia
+    \item \texttt{transactions.js} -- soubor obsahující příkazy importující definované transakce
+    \item \texttt{queries.js} -- soubor obsahující příkazy vykonávající dotazy popsané v kapitole č. 3
+    \item \texttt{updates.js} -- soubor obsahující příkazy vykonávající úpravy dokumentů popsané v kapitole č. 4
+\end{itemize}
 
-Limitace dotazování spočívá v tom, že obchodovací páry v jednotlivých obchodech jsou referencovány přes ID, a tak není možné v rámci jednoho dotazu získat obchody včetně příslušných obchodních párů.
+Zatímco obchodovací páry jsou v databázové struktuře realizovány pomocí embedded objektů, tak transakce jsou od portfólií odděleny a referencují je přes jejich identifikátor.
 
-Mezi vhodná metadata při ukládání do relační databáze patří datum exportu z burzy a zdroj, ze kterého export pochází.
+Jelikož JSON je velmi flexibilní datový formát, tak během vypracovávání této semestrální práce nebyly objeveny žádné limitace tohoto datového formátu při ukládání dat z této domény.
 
-Jako jediný nepovinný údaj se v databázové struktuře používá atribut \texttt{sell}, který označuje prodeje. Jeho přítomnost není problematická.
+Jako problémové se jeví použití projekce při agregaci dvou kolekcí, kdy takový dotaz by byl poměrně složitý a neintuitivní.
+
+Jediný nepovinný údaj, který se v navržené databázové struktuře používá, je atribut \texttt{sell}, který označuje prodeje. Jeho přítomnost není problematická.
 
 
 
