@@ -40,3 +40,5 @@ print("#6 sum the size of all BTC buy orders from the portfolio with ID 2")
 
 db.transactions.aggregate([{$match: {$and:[{"portfolioId":2}, {"tradingPair.symbol": "btc"}, {"sell": {$exists: false}}]}}, {$group: {_id: "$tradingPair.symbol", hodnota: {$sum: "$size"}}}])
 
+// #7 use aggregation to assign a correct portfolio name to all transactions
+db.portfolios.aggregate([{$lookup: {"from": "transactions", "localField": "_id", "foreignField": "portfolioId", "as": "transactions"}}, {$project: {"portfolio_name":"$name", "transactions":"$transactions"}}])

@@ -1,12 +1,12 @@
 db.createCollection("transactions")
 
-db.transactions.insert({'_id': 0, 'porfolio_id': 0, 'size': 5, 'filledPrice': 601, 'fee': 1, 'timestamp': 1568204888, 'tradingPair': {'symbol': 'eth', 'currency': 'usd'}})
+db.transactions.insert({'_id': 0, 'portfolioId': 0, 'size': 5, 'filledPrice': 601, 'fee': 1, 'timestamp': 1568204888, 'tradingPair': {'symbol': 'eth', 'currency': 'usd'}})
  
-db.transactions.insert({'_id': 1, 'porfolio_id': 0, 'size': 1.9, 'filledPrice': 1200, 'fee': 3.1, 'timestamp': 1600453712, 'tradingPair': {'symbol': 'eth', 'currency': 'usd'}})
+db.transactions.insert({'_id': 1, 'portfolioId': 0, 'size': 1.9, 'filledPrice': 1200, 'fee': 3.1, 'timestamp': 1600453712, 'tradingPair': {'symbol': 'eth', 'currency': 'usd'}})
  
-db.transactions.insert({'_id': 2, 'porfolio_id': 0, 'size': 2.5, 'filledPrice': 200, 'fee': 4, 'sell': true, 'timestamp': 1615676150, 'tradingPair': {'symbol': 'eth', 'currency': 'usd'}})
+db.transactions.insert({'_id': 2, 'portfolioId': 0, 'size': 2.5, 'filledPrice': 200, 'fee': 4, 'sell': true, 'timestamp': 1615676150, 'tradingPair': {'symbol': 'eth', 'currency': 'usd'}})
  
-db.transactions.insert({'_id': 3, 'porfolio_id': 0, 'size': 2.5, 'filledPrice': 200, 'fee': 4, 'timestamp': 1581951534, 'tradingPair': {'symbol': 'eth', 'currency': 'usd'}})
+db.transactions.insert({'_id': 3, 'portfolioId': 0, 'size': 2.5, 'filledPrice': 200, 'fee': 4, 'timestamp': 1581951534, 'tradingPair': {'symbol': 'eth', 'currency': 'usd'}})
  
 db.transactions.insert({'_id': 4, 'portfolioId': 0, 'size': 0.25, 'filledPrice': 26510.17, 'fee': 51.37, 'timestamp': 1619143926, 'tradingPair': {'symbol': 'btc', 'currency': 'usd'}})
  
