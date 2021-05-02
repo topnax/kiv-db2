@@ -1,0 +1,52 @@
+#portfolios
+
+{
+    "name": "Main Portfolio",
+    "description": "Tracking Bitcoin/Ethereum",
+    "trading-pairs": [
+        {
+            "symbol": "btc",
+            "currency": "usd"
+        },
+        {
+            "symbol": "eth",
+            "currency": "usd"
+        }
+    ]
+}
+
+
+{
+    "name": "Altcoin Portfolio",
+    "description": "Tracking altcoins",
+    "trading-pairs": [
+        {
+            "symbol": "ada",
+            "currency": "usd"
+        },
+        {
+            "symbol": "ltc",
+            "currency": "usd"
+        },
+        {
+            "symbol": "doge",
+            "currency": "eur"
+        }
+    ]
+}
+
+
+{
+    "name": "Parents portfolio",
+    "description": "Tracking investments of my parents",
+    "trading-pairs": [
+        {
+            "symbol": "btc",
+            "currency": "eur"
+        },
+        {
+            "symbol": "ada",
+            "currency": "usd"
+        }
+    ]
+}
