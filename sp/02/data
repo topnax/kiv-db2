@@ -37,7 +37,7 @@
 
 
 {
-    "name": "Parents portfolio",
+    "name": "Parents' portfolio",
     "description": "Tracking investments of my parents",
     "trading-pairs": [
         {
@@ -50,3 +50,46 @@
         }
     ]
 }
+
+{
+    "name": "John's portfolio",
+    "description": "Tracking investments of my friend John",
+    "trading-pairs": [
+        {
+            "symbol": "btc",
+            "currency": "eur"
+        },
+        {
+            "symbol": "ada",
+            "currency": "usd"
+        },
+        {
+            "symbol": "dot",
+            "currency": "usd"
+        },       
+        {
+            "symbol": "eth",
+            "currency": "usd"
+        },       
+        {
+            "symbol": "xlm",
+            "currency": "eur"
+        },       
+        {
+            "symbol": "bnb",
+            "currency": "eur"
+        },       
+        {
+            "symbol": "mkr",
+            "currency": "eur"
+        },       
+    ]
+}
+
+
+# transactions
+
+
+
+
+
