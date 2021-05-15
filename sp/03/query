@@ -1,0 +1,130 @@
+
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+
+SELECT  *
+
+WHERE {
+  ?portfolio a type:Portfolio .
+  ?portfolio prop:name ?name .
+  filter( regex(?name, "Port" ))
+}
+
+
+
+
+#  all orders of portfolio 1
+
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX trading_pair: <http://kralst.cz/ontologies/crypto/trading_apir#>
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+PREFIX pro: <http://purl.org/hpi/patchr#>
+PREFIX : <undefined>
+
+SELECT  *
+
+WHERE {
+  ?order a type:Order .
+  ?order prop:portfolio portfolio:1 .
+  ?order prop:size ?size
+}
+
+
+# ALL BTC orders of portfolio 1
+
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+PREFIX pro: <http://purl.org/hpi/patchr#>
+PREFIX : <undefined>
+PREFIX pr: <http://purl.org/ontology/prv/core#>
+
+SELECT  *
+
+WHERE {
+  ?order a type:Order .
+  ?order prop:portfolio portfolio:1 .
+  ?order prop:size ?size .
+  ?order prop:tradingPair tradingPair:1 .
+  
+  FILTER NOT EXISTS {
+  	?order prop:sell ?x  
+  }
+  
+}
+
+# 2 podmínka na číselnou hodnotu;
+# 4 podmínka na neexistenci trojice/hodnoty;
+
+
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+PREFIX pro: <http://purl.org/hpi/patchr#>
+PREFIX : <undefined>
+PREFIX pr: <http://purl.org/ontology/prv/core#>
+
+SELECT  *
+
+WHERE {
+  ?order a type:Order .
+  ?order prop:portfolio portfolio:1 .
+  ?order prop:size ?size .
+  FILTER NOT EXISTS {
+  	?order prop:sell true
+  }
+  
+  FILTER (
+  	?size > 0.010
+  ).
+}
+
+# 3 podmínka na existenci podřetězce v textové hodnotě;
+
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/tradingPair#>
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+
+SELECT  *
+
+WHERE {
+  	?tradingPair a type:TradingPair .
+    ?tradingPair prop:symbol ?symbol .
+	?tradingPair prop:name ?name .
+  	filter( regex(?name, "coin" ))
+}
+
+# 1. vzor nad nepovinnou položkou;
+
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+
+SELECT  ?name ?size ?symbol
+
+WHERE {
+  	?order a type:Order .
+  	?order prop:portfolio ?portfolio .
+  	?portfolio prop:name ?name .
+  	?order prop:tradingPair ?tradingPair .
+  	?tradingPair prop:symbol ?symbol .
+  	?order prop:size ?size .
+  	?order prop:sell true
+}
+
+
+
+1 vzor nad nepovinnou položkou;
+2 podmínka na číselnou hodnotu;
+3 podmínka na existenci podřetězce v textové hodnotě;
+4 podmínka na neexistenci trojice/hodnoty;
+5 podmínka využívající logickou spojku A nebo NEBO;
+6 vzor využívající Property Path;
+7 odefinice hledaných n-tic (alespoň dvojic) hodnot klíčovým slovem VALUES;
+8 agregační funkce;
+

@@ -135,23 +135,23 @@ order:8     a                   type:Order ;
 order:9     a                   type:Order ;
             prop:size           9 ;
             prop:price          202 ;
-            prop:fee            1.5;
+            prop:fee            1.5 ;
             prop:timestamp      1618679531 ;
             prop:tradingPair    tradingPair:2 ;
             prop:portfolio      portfolio:2 .
 
 order:10    a                   type:Order ;
-            prop:size           0.005
+            prop:size           0.005 ;
             prop:price          32123 ;
-            prop:fee            0.3;
+            prop:fee            0.3 ;
             prop:timestamp      1618709161 ;
             prop:tradingPair    tradingPair:1 ;
             prop:portfolio      portfolio:1 .
 
 order:11    a                   type:Order ;
-            prop:size           0.015
+            prop:size           0.015 ;
             prop:price          32227 ;
-            prop:fee            0.6;
+            prop:fee            0.6 ;
             prop:timestamp      1618709961 ;
             prop:tradingPair    tradingPair:1 ;
             prop:portfolio      portfolio:1 .
@@ -179,8 +179,5 @@ order:13    a                   type:Order ;
             prop:timestamp      1618679531 ;
             prop:tradingPair    tradingPair:2 ;
             prop:portfolio      portfolio:2 .
-
-
-
 
 
