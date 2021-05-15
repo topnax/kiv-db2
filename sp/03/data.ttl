@@ -1,0 +1,186 @@
+@prefix portfolio: <http://kralst.cz/ontologies/crypto/portfolio#> .
+@prefix tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#> .
+@prefix order: <http://kralst.cz/ontologies/crypto/order#> .
+@prefix prop: <http://kralst.cz/ontologies/prop#> .
+@prefix type: <http://kralst.cz/ontologies/type#> .
+
+# portfolios
+
+portfolio:1 a                   type:Portfolio ;
+            prop:name           "Main portfolio" ;
+            prop:description    "Tracking Bitcoin/Ethereum" ;
+            prop:currency       "EUR" .
+
+
+portfolio:2 a                   type:Portfolio ;
+            prop:name           "Altcoin Portfolio" ;
+            prop:description    "Tracking altcoints" ;
+            prop:currency       "EUR" .
+
+portfolio:3 a                   type:Portfolio ;
+            prop:name           "Parents' portfolio" ;
+            prop:description    'Tracking investments of my parents' ;
+            prop:currency       "USD" .
+
+portfolio:4 a                   type:Portfolio ;
+            prop:name           "John's portfolio" ;
+            prop:description    'Tracking investments of my friend John' ;
+            prop:currency       "EUR" .
+
+
+# trading pairs
+
+tradingPair:1  a               type:TradingPair ;
+                prop:symbol     "BTC" ;
+                prop:name       "Bitcoin" ;
+                prop:currency   "USD" .
+
+
+tradingPair:2  a               type:TradingPair ;
+                prop:symbol     "LTC" ;
+                prop:name       "Litecoin" ;
+                prop:currency   "USD" .
+
+
+tradingPair:3  a               type:TradingPair ;
+                prop:symbol     "ETH" ;
+                prop:name       "Ethereum" ;
+                prop:currency   "EUR" .
+
+tradingPair:4  a               type:TradingPair ;
+                prop:symbol     "ADA" ;
+                prop:name       "Cardano" ;
+                prop:currency   "USD" .
+
+tradingPair:5  a               type:TradingPair ;
+                prop:symbol     "DOT" ;
+                prop:name       "Polkadot" ;
+                prop:currency   "USD" .
+
+tradingPair:6  a               type:TradingPair ;
+                prop:symbol     "DOGE" ;
+                prop:name       "Dogecoin" ;
+                prop:currency   "USD" .
+
+# orders
+
+order:1     a                   type:Order ;
+            prop:size           1 ;
+            prop:price          20000 ;
+            prop:fee            1 ;
+            prop:timestamp      1618675561 ;
+            prop:tradingPair    tradingPair:1 ;
+            prop:sell           false ;
+            prop:portfolio      portfolio:1 .
+
+order:2     a                   type:Order ;
+            prop:size           0.30 ;
+            prop:price          20900 ;
+            prop:fee            0.22 ;
+            prop:timestamp      1618675531 ;
+            prop:tradingPair    tradingPair:1 ;
+            prop:sell           true ;
+            prop:portfolio      portfolio:1 .
+
+order:3     a                   type:Order ;
+            prop:size           10000 ;
+            prop:price          0.16 ;
+            prop:fee            1 ;
+            prop:timestamp      1618675561 ;
+            prop:tradingPair    tradingPair:4 ;
+            prop:portfolio      portfolio:2 .
+
+order:4     a                   type:Order ;
+            prop:size           5 ;
+            prop:price          230 ;
+            prop:fee            3 ;
+            prop:timestamp      1618675531 ;
+            prop:tradingPair    tradingPair:2 ;
+            prop:sell           true ;
+            prop:portfolio      portfolio:2 .
+
+order:5     a                   type:Order ;
+            prop:size           0.01 ;
+            prop:price          11200 ;
+            prop:fee            1.2 ;
+            prop:timestamp      1618675161 ;
+            prop:tradingPair    tradingPair:1 ;
+            prop:portfolio      portfolio:3 .
+
+order:6     a                   type:Order ;
+            prop:size           1 ;
+            prop:price          90 ;
+            prop:fee            0.2 ;
+            prop:timestamp      1618675511 ;
+            prop:sell           true ;
+            prop:tradingPair    tradingPair:2 ;
+            prop:portfolio      portfolio:3 .
+
+order:7     a                   type:Order ;
+            prop:size           0.003 ;
+            prop:price          34193 ;
+            prop:fee            0.5 ;
+            prop:timestamp      1618675161 ;
+            prop:tradingPair    tradingPair:1 ;
+            prop:portfolio      portfolio:1 .
+
+order:8     a                   type:Order ;
+            prop:size           0.5 ;
+            prop:price          1800 ;
+            prop:fee            1.21 ;
+            prop:timestamp      1618675511 ;
+            prop:tradingPair    tradingPair:3 ;
+            prop:portfolio      portfolio:2 .
+
+order:9     a                   type:Order ;
+            prop:size           9 ;
+            prop:price          202 ;
+            prop:fee            1.5;
+            prop:timestamp      1618679531 ;
+            prop:tradingPair    tradingPair:2 ;
+            prop:portfolio      portfolio:2 .
+
+order:10    a                   type:Order ;
+            prop:size           0.005
+            prop:price          32123 ;
+            prop:fee            0.3;
+            prop:timestamp      1618709161 ;
+            prop:tradingPair    tradingPair:1 ;
+            prop:portfolio      portfolio:1 .
+
+order:11    a                   type:Order ;
+            prop:size           0.015
+            prop:price          32227 ;
+            prop:fee            0.6;
+            prop:timestamp      1618709961 ;
+            prop:tradingPair    tradingPair:1 ;
+            prop:portfolio      portfolio:1 .
+
+order:12    a                   type:Order ;
+            prop:size           0.019 ;
+            prop:price          32217 ;
+            prop:fee            0.7 ;
+            prop:timestamp      1618709961 ;
+            prop:tradingPair    tradingPair:1 ;
+            prop:portfolio      portfolio:1 .
+
+order:13    a                   type:Order ;
+            prop:size           0.5 ;
+            prop:price          1800 ;
+            prop:fee            1200 ;
+            prop:timestamp      1618659531 ;
+            prop:tradingPair    tradingPair:3 ;
+            prop:portfolio      portfolio:2 .
+
+order:13    a                   type:Order ;
+            prop:size           9 ;
+            prop:price          202 ;
+            prop:fee            1.5 ;
+            prop:timestamp      1618679531 ;
+            prop:tradingPair    tradingPair:2 ;
+            prop:portfolio      portfolio:2 .
+
+
+
+
+
