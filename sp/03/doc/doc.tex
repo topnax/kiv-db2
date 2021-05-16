@@ -1,0 +1,355 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[czech]{babel}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{amsmath}
+\usepackage[hidelinks,unicode]{hyperref}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage[final]{pdfpages}
+\usepackage{syntax}
+
+
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\usetikzlibrary{shapes,positioning,matrix,arrows}
+
+\newcommand{\img}[1]{(viz obr. \ref{#1})}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+%define Javascript language
+\lstdefinelanguage{JavaScript}{
+keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+keywordstyle=\color{blue}\bfseries,
+ndkeywords={class, export, boolean, throw, implements, import, this},
+ndkeywordstyle=\color{darkgray}\bfseries,
+identifierstyle=\color{black},
+sensitive=false,
+comment=[l]{//},
+morecomment=[s]{/*}{*/},
+commentstyle=\color{purple}\ttfamily,
+stringstyle=\color{pgreen}\ttfamily,
+morestring=[b]',
+morestring=[b]"
+}
+
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    commentstyle=\color{eclipseStrings}, % style of comment
+    stringstyle=\color{eclipseKeywords}, % style of strings
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    string=[s]{"}{"},
+    comment=[l]{:\ "},
+    morecomment=[l]{:"},
+    literate=
+        *{0}{{{\color{numb}0}}}{1}
+         {1}{{{\color{numb}1}}}{1}
+         {2}{{{\color{numb}2}}}{1}
+         {3}{{{\color{numb}3}}}{1}
+         {4}{{{\color{numb}4}}}{1}
+         {5}{{{\color{numb}5}}}{1}
+         {6}{{{\color{numb}6}}}{1}
+         {7}{{{\color{numb}7}}}{1}
+         {8}{{{\color{numb}8}}}{1}
+         {9}{{{\color{numb}9}}}{1}
+}
+
+\lstset{
+    frame=tb,
+    language=json,
+    aboveskip=3mm,
+    belowskip=3mm,
+    showstringspaces=false,
+    columns=flexible,
+    basicstyle={\small\ttfamily},
+    numbers=none,
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{pgreen},
+    stringstyle=\color{mauve},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=3
+}
+
+
+\let\oldsection\section
+\renewcommand\section{\clearpage\oldsection}
+
+\begin{document}
+	% this has to be placed here, after document has been created
+	% \counterwithout{lstlisting}{chapter}
+	\renewcommand{\lstlistingname}{Ukázka kódu}
+	\renewcommand{\lstlistlistingname}{Seznam ukázek kódu}
+    \begin{titlepage}
+
+        \centering
+
+        \vspace*{\baselineskip}
+        \begin{figure}[H]
+        \centering
+        \includegraphics[width=7cm]{img/fav-logo.jpg}
+        \end{figure}
+
+        \vspace*{1\baselineskip}
+
+        \vspace{0.75\baselineskip}
+
+        \vspace{0.5\baselineskip}
+        {Semestrální práce z předmětu KIV/DB2}
+
+        {\LARGE\sc RDF databáze a SPARQL dotazy\\}
+
+        \vspace{4\baselineskip}
+
+        \vspace{0.5\baselineskip}
+
+        {\sc\Large Stanislav Král \\}
+        \vspace{0.5\baselineskip}
+        {A20N0091P}
+
+        \vfill
+
+        {\sc Západočeská univerzita v Plzni\\
+        Fakulta aplikovaných věd}
+
+    \end{titlepage}
+
+
+    % TOC
+    \tableofcontents
+    \pagebreak
+
+    
+\section{Popis řešeného tématu}
+Zvolené téma představuje situaci investora, který nakupuje a prodává kryptoměny na různých směnárnách či burzách. Pro takového investora je důležité, aby všechny informace o nákupech byly jednoduše dohledatelné a aby jednotlivé kryptoměny mohl třídit do portfólií. Tento investor by si mohl například chtít třídit nákupy do portfólia, ve kterém si bude vést obchody s významnějšími kryptoměnami (např. Bitcoin či Ethereum) a obchody s méně významnými kryptoměnami (dle tržní kapitalizace např. Basic Attention Token či Solana) do jiného portfólia.
+    
+Dále je také nutné, aby ke každému obchodu byla přiřazena informace v jaké měně byl uskutečněn. Toto se nejčastěji reprezentuje pomocí tzv. \textit{obchodních párů}, které se skládají z měny (např. USD) a dané komodity (např. BTC).
+
+Pomocí takto popsaného nástroje (databáze), který tento problém řeší, si investor může např. svá portfólia porovnat oproti aktuálnímu kurzu kryptoměn, a zjistit jak se jeho obchodům daří. Takový nástroj by také našel využití i při vyplňování daňového přiznání.
+
+\section{Popis datové struktury}
+
+Ve vytvořené databází se používají následující jmenné prostory:
+
+\begin{itemize}
+    \item \texttt{http://kralst.cz/ontologies/crypto/portfolio} -- jmenný prostor portfólií
+    \item \texttt{http://kralst.cz/ontologies/crypto/tradingPair} -- jmenný prostor obchodních párů
+    \item \texttt{http://kralst.cz/ontologies/crypto/order} -- jmenný prostor transakcí
+    \item \texttt{http://kralst.cz/ontologies/prop} -- jmenný prostor určený pro popis vlastností entit vyskytujících se v databázi
+    \item \texttt{http://kralst.cz/ontologies/type} -- jmenný prostor pro specifikaci typů entit vyskytujících se v databázi
+\end{itemize}
+
+Základní vazba mezi entitami datové struktury je taková, že transakce referencuje jak portfólio, do kterého je zařazena, tak i obchodní pár, kterého se týká. Pomocí transakcí je realizována vazba M:N mezi portfóliemi a kryptoměnami (součást obchodního páru).
+
+\begin{figure}[!ht]
+\centering
+{\includegraphics[width=13.5cm]{img/diagram.pdf}}
+\caption{Diagram zobrazující základní relace mezi objekty dat. struktury}
+\label{fig:screen-transition-diagram}
+\end{figure}
+
+Pro splnění zadání byla k některým portfóliím uměle přidána informace, jaké transakce do něj patří.
+
+\subsection{Portfólia}
+Objekty typu \texttt{Portfolio} představují portfólia a mívají následující vlastnosti:
+\begin{itemize}
+    \item \texttt{name} -- pojmenování portfólia
+    \item \texttt{description} -- vlastní popis portfólia
+    \item \texttt{transactions} -- seznam vybraných transakcí, které jsou k portfóliu přiřazeny (neobjevuje se vždy)
+\end{itemize}
+
+\begin{lstlisting}
+portfolio:1 a                   type:Portfolio ;
+             prop:name           "Main portfolio" ;
+             prop:description    "Tracking Bitcoin/Ethereum" .
+\end{lstlisting}
+
+\subsection{Obchodní páry}
+Pro reprezentaci obchodních párů, které byly kdy obchodovány, se používají objekty typu \texttt{TradingPair} mající následující vlastnosti:
+
+\begin{itemize}
+    \item \texttt{symbol} -- zkratka kryptoměny
+    \item \texttt{name} -- celý název kryptoměny
+    \item \texttt{currency} -- zkratka měny, ve které je daná kryptoměna obchodována
+\end{itemize}
+
+\begin{lstlisting}
+tradingPair:1   a               type:TradingPair ;
+                prop:symbol     "BTC" ;
+                prop:name       "Bitcoin" ;
+                prop:currency   "USD" .
+\end{lstlisting}
+
+
+\subsection{Uskutečněné obchody (transakce)}
+Aby bylo možné ukládat informaci o uskutečněných obchodech, tak se vytváří objekty typu \texttt{Order}, které obsahují následující atributy popisující vlastnosti transakce: 
+\begin{itemize}
+    \item \texttt{size} -- množství kryptoměny, která byla obchodována
+    \item \texttt{price} -- cena za jednu minci kryptoměny
+    \item \texttt{fee} -- poplatek za uskutečněný nákup
+    \item \texttt{timestamp} -- datum a čas, kdy se nákup uskutečnil ve formátu UNIX Timestamp
+    \item \texttt{tradingPair} -- obchodní pár, kterého se tento obchod týkal
+    \item \texttt{sell} -- nepovinná vlastnost, která se nastavuje na objekt \texttt{true}, pokud daný obchod představoval prodej
+    \item \texttt{portfolio} -- portfólio, do kterého daný obchod patří
+\end{itemize}
+
+\begin{lstlisting}
+order:2     a                   type:Order ;
+            prop:size           0.30 ;
+            prop:price          20900 ;
+            prop:fee            0.22 ;
+            prop:timestamp      1618675531 ;
+            prop:tradingPair    tradingPair:1 ;
+            prop:sell           true ;
+            prop:portfolio      portfolio:1 .
+\end{lstlisting}
+
+\section{Popis vyhledávacích dotazů nad databázovou strukturou}
+Ke zjištení užitečných informací o obchodování bylo vytvořeno 7 dotazů.
+
+\subsection{Vyhledání všech portfólií obchodujících kryptoměnu ADA}
+Pro vyhledání všech portfólií, kterých se týká jakýkoliv obchodní pár s kryptoměnou ADA, slouží následující dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+db.portfolios.find({"tradingPairs.symbol": "ada"})
+\end{lstlisting}
+Výsledek obsahuje kolekci dokumentů představujících portfólia.
+
+\subsection{Vyhledání všech BTC transakcí s objemem větší než 0.33 BTC}
+Pro vyhledání všech transakcí, kdy se obchodoval obchodní pár BTC/EUR a objem byl větší než 0.33 BTC, slouží následující dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+db.transactions.find({\$and:[{"size": {$gte: 0.33}}, {"tradingPair.symbol": "btc"}, {"tradingPair.currency": "eur"}]})
+
+\end{lstlisting}
+Výsledek obsahuje kolekci dokumentů představujících uskutečněné transakce.
+
+\subsection{Vyhledání všech prodejů}
+K vyhledání všech transakcích, kdy byla prodávána kryptoměna, slouží následující dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+db.transactions.find({"sell": {$exists: true}})
+\end{lstlisting}
+Výsledek obsahuje kolekci dokumentů představujících transakce.
+
+
+\subsection{Vyhledání všech transakcí s kryptoměnou ADA či DOT}
+K vyhledání všech transakcích, kdy byla obchodována kryptoměna ADA či DOT, slouží následující dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+
+db.transactions.aggregate([{$match:{"tradingPair.symbol": {$in: ["ada", "dot"]}}}, {$project: {"size": 1, "filledPrice": 1, "tradingPair": {$concat:["$tradingPair.symbol", "/", "$tradingPair.currency"]}}}])
+
+\end{lstlisting}
+
+Výsledek obsahuje kolekci projekovaných dokumentů představujících transakce, kdy každý dokument obsahuje pouze základní informace o transakci (pole \texttt{size}, \texttt{filledPrice}) a pole \texttt{tradingPair}, které se skládá z textové reprezentace obchodovaného páru.
+
+
+\subsection{Vyhledání všech portfólií jejichž název odpovídá regulárnímu výrazu}
+Pro demonstraci použití vyhledávání portfólií, jejichž název odpovídá nějakému regulárnímu výrazu, slouží následující dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+db.portfolios.find({"description": {$regex: "(Tracking )(.*)( of)"}})
+\end{lstlisting}
+
+Výsledek je kolekcí všech dokumentů představující portfólia, jejichž název odpovídá danému regulárnímu výrazu. V přiloženém ukázkovém dotaze jsou vyhledána všechna portfólia, která v názvu obsahují slova \textit{Tracking} a \textit{of}, kdy mezi těmito slovy může být libovolný počet znaků.
+
+\subsection{Výpočet sumy všech uskutečněných nákupů kryptoměny Bitcoin ve vybraném portfóliu}
+Následující dotaz vypočítá sumu všech uskutečněných nákupů nějaké kryptoměny ve vybraném portfóliu:
+
+\begin{lstlisting}[language=JavaScript]
+
+db.transactions.aggregate([{$match: {$and:[{"portfolioId":2}, {"tradingPair.symbol": "btc"}, {"sell": {$exists: false}}]}}, {$group: {_id: "$tradingPair.symbol", sum: {$sum: "$size"}}}])
+
+\end{lstlisting}
+Výsledkem je dokument, který obsahuje následující atributy: 
+
+\begin{itemize}
+    \item \texttt{_id} -- identifikátor kryptoměny, jejíž nákupy byly sčítány
+    \item \texttt{sum} -- součet všech nákupů vybrané kryptoměny
+\end{itemize}
+
+
+\subsection{Spojení všech transakcí s portfóliemi do kterých patří}
+K spojení všech portfólií a transkací, které jsou k nim přiřazeny, slouží následující dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+
+db.portfolios.aggregate([{$lookup: {"from": "transactions", "localField": "_id", "foreignField": "portfolioId", "as": "transactions"}}, {$project: {"portfolio_name":"$name", "transactions":"$transactions"}}])
+
+\end{lstlisting}
+Výsledkem je dokument, který obsahuje následující atributy: 
+
+\begin{itemize}
+    \item \texttt{_id} -- identifikátor portfólia
+    \item \texttt{portfolio_name} -- název portfólia
+    \item \texttt{transactions} -- objekt obsahující kolekci dokumentů představujících transakce
+\end{itemize}
+
+
+\section{Popis dotazů upravujících databázi}
+Aby byla demonstrována úprava dokumentů databáze, tak byly vytvořeny 2 dotazy.
+
+\subsection{Změna vybraného obchodního páru ve všech transakcích}
+Pro změnu symbolu všech obchodních párů se symbolem \texttt{eth} na \texttt{eth2} ve všech transakcích lze použít následující dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+
+db.transactions.update({"tradingPair.symbol": "eth"}, {"$set": {"tradingPair.symbol":"eth2"}}, {"multi": true})
+
+\end{lstlisting}
+
+
+
+\subsection{Přidání obchodního páru do již existujícího portfólia}
+V případě požadavku na přidání dalšího obchodního páru do již existujícího portfólia lze použít tento dotaz:
+
+\begin{lstlisting}[language=JavaScript]
+
+db.portfolios.update({"_id": 0}, {"$push": {"tradingPairs": {"symbol": "doge", "currency": "czk"}}})
+
+\end{lstlisting}
+
+Ukázkový dotaz přidá obchodní pár DOGE/CZK do portfólia specifikovaného pomocí identifikátoru \texttt{0}.
+
+
+\section{Diskuze nad řešením v dané technologii}
+Struktura dokumentů byla popsána v kapitole č. 2, kdy existují dva typy dokumentů: portfólia a transakce. 
+
+V rámci řešení této práce byly vytvořeny 4 soubory obsahující kód v jazyce JavaScript, které slouží ke zjednodušení nahrávání dat do MongoDB databáze:
+
+\begin{itemize}
+    \item \texttt{portfolios.js} -- soubor obsahující příkazy importující definovaná portfólia
+    \item \texttt{transactions.js} -- soubor obsahující příkazy importující definované transakce
+    \item \texttt{queries.js} -- soubor obsahující příkazy vykonávající dotazy popsané v kapitole č. 3
+    \item \texttt{updates.js} -- soubor obsahující příkazy vykonávající úpravy dokumentů popsané v kapitole č. 4
+\end{itemize}
+
+Zatímco obchodovací páry jsou v databázové struktuře realizovány pomocí embedded objektů, tak transakce jsou od portfólií odděleny a referencují je přes jejich identifikátor.
+
+Jelikož JSON je velmi flexibilní datový formát, tak během vypracovávání této semestrální práce nebyly objeveny žádné limitace tohoto datového formátu při ukládání dat z této domény.
+
+Jako problémové se jeví použití projekce při agregaci dvou kolekcí, kdy takový dotaz by byl poměrně složitý a neintuitivní.
+
+Jediný nepovinný údaj, který se v navržené databázové struktuře používá, je atribut \texttt{sell}, který označuje prodeje. Jeho přítomnost není problematická.
+
+
+
+\end{document} 
