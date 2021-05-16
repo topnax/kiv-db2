@@ -88,6 +88,8 @@ morestring=[b]"
     tabsize=3
 }
 
+\lstset{language=SQL,morekeywords={PREFIX,FILTER,java,rdf,rdfs,url}}
+
 
 \let\oldsection\section
 \renewcommand\section{\clearpage\oldsection}
@@ -224,111 +226,174 @@ order:2     a                   type:Order ;
 \section{Popis vyhledávacích dotazů nad databázovou strukturou}
 Ke zjištení užitečných informací o obchodování bylo vytvořeno 7 dotazů.
 
-\subsection{Vyhledání všech portfólií obchodujících kryptoměnu ADA}
-Pro vyhledání všech portfólií, kterých se týká jakýkoliv obchodní pár s kryptoměnou ADA, slouží následující dotaz:
+\subsection{Vyhledání všech nákupů portfólia o větším než požadovaném objemu  }
+Pro vyhledání všech nákupních transakcí, které jsou přiřazeny vybranému portfóliu a obchodovaly větší než požadovaný objem krpytoměny, slouží následující dotaz:
 
-\begin{lstlisting}[language=JavaScript]
-db.portfolios.find({"tradingPairs.symbol": "ada"})
+\begin{lstlisting}
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+
+SELECT  *
+
+WHERE {
+  ?order a type:Order .
+  ?order prop:portfolio portfolio:1 .
+  ?order prop:size ?size .
+  FILTER NOT EXISTS {
+  	?order prop:sell true
+  }
+  
+  FILTER (
+  	?size > 0.010
+  )
+}
 \end{lstlisting}
-Výsledek obsahuje kolekci dokumentů představujících portfólia.
+Výsledek obsahuje jednotlivé nákupy a jejich objemy.
 
-\subsection{Vyhledání všech BTC transakcí s objemem větší než 0.33 BTC}
-Pro vyhledání všech transakcí, kdy se obchodoval obchodní pár BTC/EUR a objem byl větší než 0.33 BTC, slouží následující dotaz:
+\subsection{Vyhledání všech obchodních párů, které mají v názvu vybraný podřetězec}
+Seznam všech obchodních párů, které v názvu obsahují požadovaný podřetězec, lze získat vykonáním následujícího dotazu:
 
-\begin{lstlisting}[language=JavaScript]
-db.transactions.find({\$and:[{"size": {$gte: 0.33}}, {"tradingPair.symbol": "btc"}, {"tradingPair.currency": "eur"}]})
+\begin{lstlisting}
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/tradingPair#>
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
 
+SELECT  *
+
+WHERE {
+    ?tradingPair a type:TradingPair .
+    ?tradingPair prop:symbol ?symbol .
+    ?tradingPair prop:name ?name .
+
+    FILTER(
+        # trading pairs containing the string "coin" in their name
+        regex(?name, "coin")
+    
+}
 \end{lstlisting}
-Výsledek obsahuje kolekci dokumentů představujících uskutečněné transakce.
+Výsledek obsahuje jednotlivé obchodní páry, zkratku kryptoměny a její název.
 
-\subsection{Vyhledání všech prodejů}
-K vyhledání všech transakcích, kdy byla prodávána kryptoměna, slouží následující dotaz:
+\subsection{Vyhledání všech uskutečněných prodejů}
+Seznam všech prodejů včetně názvu portfólií, ve kterých se uskutečnily, lze získat vykonáním následujícího dotazu:
 
-\begin{lstlisting}[language=JavaScript]
-db.transactions.find({"sell": {$exists: true}})
-\end{lstlisting}
-Výsledek obsahuje kolekci dokumentů představujících transakce.
+\begin{lstlisting}
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
 
+SELECT  ?portfolioName ?size ?symbol
 
-\subsection{Vyhledání všech transakcí s kryptoměnou ADA či DOT}
-K vyhledání všech transakcích, kdy byla obchodována kryptoměna ADA či DOT, slouží následující dotaz:
-
-\begin{lstlisting}[language=JavaScript]
-
-db.transactions.aggregate([{$match:{"tradingPair.symbol": {$in: ["ada", "dot"]}}}, {$project: {"size": 1, "filledPrice": 1, "tradingPair": {$concat:["$tradingPair.symbol", "/", "$tradingPair.currency"]}}}])
-
-\end{lstlisting}
-
-Výsledek obsahuje kolekci projekovaných dokumentů představujících transakce, kdy každý dokument obsahuje pouze základní informace o transakci (pole \texttt{size}, \texttt{filledPrice}) a pole \texttt{tradingPair}, které se skládá z textové reprezentace obchodovaného páru.
-
-
-\subsection{Vyhledání všech portfólií jejichž název odpovídá regulárnímu výrazu}
-Pro demonstraci použití vyhledávání portfólií, jejichž název odpovídá nějakému regulárnímu výrazu, slouží následující dotaz:
-
-\begin{lstlisting}[language=JavaScript]
-db.portfolios.find({"description": {$regex: "(Tracking )(.*)( of)"}})
-\end{lstlisting}
-
-Výsledek je kolekcí všech dokumentů představující portfólia, jejichž název odpovídá danému regulárnímu výrazu. V přiloženém ukázkovém dotaze jsou vyhledána všechna portfólia, která v názvu obsahují slova \textit{Tracking} a \textit{of}, kdy mezi těmito slovy může být libovolný počet znaků.
-
-\subsection{Výpočet sumy všech uskutečněných nákupů kryptoměny Bitcoin ve vybraném portfóliu}
-Následující dotaz vypočítá sumu všech uskutečněných nákupů nějaké kryptoměny ve vybraném portfóliu:
-
-\begin{lstlisting}[language=JavaScript]
-
-db.transactions.aggregate([{$match: {$and:[{"portfolioId":2}, {"tradingPair.symbol": "btc"}, {"sell": {$exists: false}}]}}, {$group: {_id: "$tradingPair.symbol", sum: {$sum: "$size"}}}])
-
-\end{lstlisting}
-Výsledkem je dokument, který obsahuje následující atributy: 
-
-\begin{itemize}
-    \item \texttt{_id} -- identifikátor kryptoměny, jejíž nákupy byly sčítány
-    \item \texttt{sum} -- součet všech nákupů vybrané kryptoměny
-\end{itemize}
-
-
-\subsection{Spojení všech transakcí s portfóliemi do kterých patří}
-K spojení všech portfólií a transkací, které jsou k nim přiřazeny, slouží následující dotaz:
-
-\begin{lstlisting}[language=JavaScript]
-
-db.portfolios.aggregate([{$lookup: {"from": "transactions", "localField": "_id", "foreignField": "portfolioId", "as": "transactions"}}, {$project: {"portfolio_name":"$name", "transactions":"$transactions"}}])
+WHERE {
+  	?order a type:Order .
+  	?order prop:portfolio ?portfolio .
+  	?portfolio prop:name ?portfolioName .
+  	?order prop:tradingPair/prop:symbol ?symbol .
+  	?order prop:size ?size .
+  	?order prop:sell true
+}
 
 \end{lstlisting}
-Výsledkem je dokument, který obsahuje následující atributy: 
-
-\begin{itemize}
-    \item \texttt{_id} -- identifikátor portfólia
-    \item \texttt{portfolio_name} -- název portfólia
-    \item \texttt{transactions} -- objekt obsahující kolekci dokumentů představujících transakce
-\end{itemize}
+Každý řádek výsledku dotazu se skládá z názvu portfólia, ve kterém byl uskutečněn daný prodej, objemu transakce a zkratky kryptoměny, které se transakce týkala.
 
 
-\section{Popis dotazů upravujících databázi}
-Aby byla demonstrována úprava dokumentů databáze, tak byly vytvořeny 2 dotazy.
+\subsection{Vyhledání všech transakcí uskutečněných ve vybrané měně}
+K získání seznamu všech transakcí, které se uskutečnily ve vybrané měně, lze použít následující dotaz:
 
-\subsection{Změna vybraného obchodního páru ve všech transakcích}
-Pro změnu symbolu všech obchodních párů se symbolem \texttt{eth} na \texttt{eth2} ve všech transakcích lze použít následující dotaz:
+\begin{lstlisting}
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
 
-\begin{lstlisting}[language=JavaScript]
+SELECT  *
 
-db.transactions.update({"tradingPair.symbol": "eth"}, {"$set": {"tradingPair.symbol":"eth2"}}, {"multi": true})
+WHERE {
+	    "EUR"	^prop:currency/^prop:tradingPair ?order.
+                ?order			prop:price			?price.
+                ?order			prop:size			?size;
+}
+\end{lstlisting}
+Každý řádek výsledku dotazu se skládá z nalezené transakce, ceny za jednu minci obchodované kryptoměny a počet obchodovaných mincí.
+
+Tento dotaz využívá dvakrát syntax pro vyhledání inverzní hrany, a to z toho důvodu, že chceme nalézt všechny obchodní páry s vybranou měnou, a poté všechny transakce, které se týkaly již nalezených párů.
+
+
+\subsection{Výpočet sumy všech poplatků za uskutečněné transakce napříč jednotlivými portfólii}
+K vypočtení sumy všech poplatků za uskutečněné transakce napříč jednotlivými portfóliemi lze použít následující dotaz obsahující agregaci:
+
+\begin{lstlisting}
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+PREFIX type: <http://kralst.cz/ontologies/type#>
+
+
+SELECT  (SUM(?fee) as ?feeSum) ?name
+
+WHERE {
+    ?order	a type:Order .
+    ?order prop:portfolio ?portfolio .
+    ?order prop:fee ?fee .
+    ?portfolio prop:name ?name .
+}
+
+GROUP BY ?portfolio	?name
 
 \end{lstlisting}
 
+Jednotlivé řádky výsledku se poté skládají z názvu portfólia a sumy všech poplatků za transakce k němu přiřazené.
 
 
-\subsection{Přidání obchodního páru do již existujícího portfólia}
-V případě požadavku na přidání dalšího obchodního páru do již existujícího portfólia lze použít tento dotaz:
+\subsection{Vyhledání všech transakcí týkajících se vybraných kryptoměn}
+Následující dotaz slouží k vyhledání všech transakcí, v rámci kterých byl uskutečněn obchod s vybranými kryptoměnami:
 
-\begin{lstlisting}[language=JavaScript]
+\begin{lstlisting}
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
 
-db.portfolios.update({"_id": 0}, {"$push": {"tradingPairs": {"symbol": "doge", "currency": "czk"}}})
+
+SELECT  ?portfolioName ?symbol ?size ?price
+
+WHERE {
+    VALUES ?symbol {"LTC" "ETH" "ADA"}
+
+    ?tradingPair prop:symbol ?symbol .
+
+    ?tradingPair ^prop:tradingPair	?order .
+
+    ?order prop:size	?size .
+    ?order prop:price	?price .
+
+    ?order prop:portfolio/prop:name ?portfolioName .
+}
 
 \end{lstlisting}
 
-Ukázkový dotaz přidá obchodní pár DOGE/CZK do portfólia specifikovaného pomocí identifikátoru \texttt{0}.
+Řádky výsledku se skládají z názvu portfólia, ve kterém byla uskutečněna hledaná transakce, ze zkratky kryptoměny, objemu transakce a ceny za jednu minci kryptoměny.
 
+
+\subsection{Vyhledání všech transakcí týkajících se vybraných kryptoměn o minimální požadované hodnotě}
+Jako alternativní dotaz pro vyhledání všech transakcí týkajících se vybraných kryptoměn doplněný o požadavek na minimální hodnotu transakce lze použít následující dotaz:
+
+\begin{lstlisting}
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+
+SELECT  *
+
+WHERE {
+  	?order a type:Order .
+  	?order prop:size ?size .
+  	?order prop:price	?price .
+  
+  	?order prop:tradingPair/prop:symbol ?symbol .
+  	?order prop:tradingPair/prop:currency ?currency .
+
+	BIND (?price * ?size AS ?cost) 
+    
+  	FILTER (
+    	?cost > 1500  && (?symbol = "BTC" || ?symbol = "LTC")
+    )
+}
+\end{lstlisting}
+
+Řádky výsledku se skládají z transakce, objemu transakce, ceny za jednu minci, zkratku obchodované kryptoměny, měny, ve které byla uskutečněna daná transakce a hodnoty transakce.
+
+Hodnota transakce je vypočtena vynásobením objemu transakce a ceny za jednu minci kryptoměny.
 
 \section{Diskuze nad řešením v dané technologii}
 Struktura dokumentů byla popsána v kapitole č. 2, kdy existují dva typy dokumentů: portfólia a transakce. 
