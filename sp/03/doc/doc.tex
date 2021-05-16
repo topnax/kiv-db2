@@ -396,24 +396,13 @@ WHERE {
 Hodnota transakce je vypočtena vynásobením objemu transakce a ceny za jednu minci kryptoměny.
 
 \section{Diskuze nad řešením v dané technologii}
-Struktura dokumentů byla popsána v kapitole č. 2, kdy existují dva typy dokumentů: portfólia a transakce. 
+Navržený model by šlo rozčlenit do více souborů, kdy by byly oddělené definice objektů jednotlivých typů entit. Bylo by však třeba správně ve všech souborech používat vytvořené jmenné prostory.
 
-V rámci řešení této práce byly vytvořeny 4 soubory obsahující kód v jazyce JavaScript, které slouží ke zjednodušení nahrávání dat do MongoDB databáze:
+Navzdory prvním pocitům z této databázové technologie jsem nenarazil na žádnou limitaci formátu RDF pro uložení dat z domény vedení záznamů o obchodování s kryptoměnami. Naopak jsem byl příjemně překvapen čitelným formátem TTL a jednoduchým (avšak mocným) dotazovacím jazykem SPARQL, kdy jsem nenarazil na žádnou obtíž při vytváření dotazů. Velmi pohodlná je syntax \textit{Property Path}
 
-\begin{itemize}
-    \item \texttt{portfolios.js} -- soubor obsahující příkazy importující definovaná portfólia
-    \item \texttt{transactions.js} -- soubor obsahující příkazy importující definované transakce
-    \item \texttt{queries.js} -- soubor obsahující příkazy vykonávající dotazy popsané v kapitole č. 3
-    \item \texttt{updates.js} -- soubor obsahující příkazy vykonávající úpravy dokumentů popsané v kapitole č. 4
-\end{itemize}
+Při využití konstrukce \texttt{OPTIONAL}, \texttt{FILTER NOT EXISTS} či chytré definice trojic při sestavování dotazu jsou nepovinné vlastnosti typu \texttt{sell} označující transakce, které představují prodej, bezproblémové.
 
-Zatímco obchodovací páry jsou v databázové struktuře realizovány pomocí embedded objektů, tak transakce jsou od portfólií odděleny a referencují je přes jejich identifikátor.
-
-Jelikož JSON je velmi flexibilní datový formát, tak během vypracovávání této semestrální práce nebyly objeveny žádné limitace tohoto datového formátu při ukládání dat z této domény.
-
-Jako problémové se jeví použití projekce při agregaci dvou kolekcí, kdy takový dotaz by byl poměrně složitý a neintuitivní.
-
-Jediný nepovinný údaj, který se v navržené databázové struktuře používá, je atribut \texttt{sell}, který označuje prodeje. Jeho přítomnost není problematická.
+V případě modelování databázové struktury při řešení problému sledování uskutečněných obchodů s kryptoměnami nevidím příliš velké využití zápisu relace mezi 2 uzly pomocí 2 hran (oba směry), a tak se mi ani nepodařilo vymyslet nějaký užitečný cyklus v grafu modelu. Současný navržený model, řekl bych, že dobře řeší zmíněný problém, a tak např. hrany vedoucí z uzlů portfólií do uzlů transakcí nepřinášejí žádnou přidanou hodnotu. 
 
 
 
