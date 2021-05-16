@@ -28,7 +28,7 @@ SELECT  *
 WHERE {
   ?order a type:Order .
   ?order prop:portfolio portfolio:1 .
-  ?order prop:size ?size
+1  ?order prop:size ?size
 }
 
 
@@ -116,6 +116,89 @@ WHERE {
   	?order prop:size ?size .
   	?order prop:sell true
 }
+
+# 6. property path - vyhledání všech nákupů v EUR
+
+
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+PREFIX ds: <http://purl.org/ctic/dcat#>
+
+SELECT  *
+
+WHERE {
+	"EUR"	^prop:currency/^prop:tradingPair ?order.
+  				?order			prop:price			?price.
+                ?order			prop:size			?size;
+}
+
+# 8 suma všech poplatků napříč jednotlivými portfólii
+
+
+SELECT  (SUM(?fee) as ?feeSum) ?name
+
+WHERE {
+  	?order	a type:Order .
+    ?order prop:portfolio ?portfolio .
+ 	?order prop:fee ?fee .
+  	?portfolio prop:name ?name .
+
+}
+
+GROUP BY ?portfolio	?name
+
+
+
+# 7 vyhledání všech transakcí s kryptoměnami LTC ETH ADA
+
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+
+SELECT  ?portfolioName ?symbol ?size ?price
+
+WHERE {
+	VALUES ?symbol {"LTC" "ETH" "ADA"}
+    
+    ?tradingPair prop:symbol ?symbol .
+  	
+  	?tradingPair ^prop:tradingPair	?order .
+  
+  	?order prop:size	?size .
+  	?order prop:price	?price .
+  
+  	?order prop:portfolio/prop:name ?portfolioName .
+
+
+}
+
+# 5 vyhledání všech transakcí s BTC/LTC a objemu větším než 1500
+
+PREFIX type: <http://kralst.cz/ontologies/type#>
+PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+
+SELECT  *
+
+WHERE {
+  	?order a type:Order .
+  	?order prop:size ?size .
+  	?order prop:price	?price .
+  
+  	?order prop:tradingPair/prop:symbol ?symbol .
+  	?order prop:tradingPair/prop:currency ?currency .
+
+	BIND (?price * ?size AS ?cost) 
+    
+  	FILTER (
+    	?cost > 1500 && (?symbol = "BTC" || ?symbol = "LTC")
+    )
+}
+
 
 
 
