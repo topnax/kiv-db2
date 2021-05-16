@@ -395,6 +395,27 @@ WHERE {
 
 Hodnota transakce je vypočtena vynásobením objemu transakce a ceny za jednu minci kryptoměny.
 
+
+\subsection{Vyhledání všech transakcí ve vybraném portfóliu s využitím hran vedoucích do transakcí}
+Jako demonstrace využití hran vedoucích do transakcí (cyklus transakce/portfólia) slouží následující dotaz pro vyhledání všech transakcí vybraného portfólia:
+
+\begin{lstlisting}
+PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+
+SELECT  ?size ?price ?symbol
+
+WHERE {
+  portfolio:3	prop:orders						?order.
+  ?order		prop:size 						?size.
+  ?order		prop:price 						?price.
+  ?order		prop:tradingPair/prop:symbol 	?symbol.
+}
+\end{lstlisting}
+
+Řádky výsledku se skládají z objemu transakce, ceny za jednu minci a zkratky obchodované kryptoměna.
+
+
 \section{Diskuze nad řešením v dané technologii}
 Navržený model by šlo rozčlenit do více souborů, kdy by byly oddělené definice objektů jednotlivých typů entit. Bylo by však třeba správně ve všech souborech používat vytvořené jmenné prostory.
 
