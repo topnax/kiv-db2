@@ -56,17 +56,16 @@ WHERE {
   
 }
 
+
+######################## START ################
+
 # 2 podmínka na číselnou hodnotu;
 # 4 podmínka na neexistenci trojice/hodnoty;
 
 
 PREFIX type: <http://kralst.cz/ontologies/type#>
-PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
 PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
 PREFIX prop: <http://kralst.cz/ontologies/prop#>
-PREFIX pro: <http://purl.org/hpi/patchr#>
-PREFIX : <undefined>
-PREFIX pr: <http://purl.org/ontology/prv/core#>
 
 SELECT  *
 
@@ -101,8 +100,6 @@ WHERE {
 # 1. vzor nad nepovinnou položkou;
 
 PREFIX type: <http://kralst.cz/ontologies/type#>
-PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
-PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
 PREFIX prop: <http://kralst.cz/ontologies/prop#>
 
 SELECT  ?name ?size ?symbol
@@ -119,12 +116,7 @@ WHERE {
 
 # 6. property path - vyhledání všech nákupů v EUR
 
-
-PREFIX type: <http://kralst.cz/ontologies/type#>
-PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
-PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
 PREFIX prop: <http://kralst.cz/ontologies/prop#>
-PREFIX ds: <http://purl.org/ctic/dcat#>
 
 SELECT  *
 
@@ -135,6 +127,9 @@ WHERE {
 }
 
 # 8 suma všech poplatků napříč jednotlivými portfólii
+
+PREFIX prop: <http://kralst.cz/ontologies/prop#>
+PREFIX type: <http://kralst.cz/ontologies/type#>
 
 
 SELECT  (SUM(?fee) as ?feeSum) ?name
@@ -150,13 +145,10 @@ WHERE {
 GROUP BY ?portfolio	?name
 
 
-
 # 7 vyhledání všech transakcí s kryptoměnami LTC ETH ADA
 
-PREFIX type: <http://kralst.cz/ontologies/type#>
-PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
-PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
 PREFIX prop: <http://kralst.cz/ontologies/prop#>
+
 
 SELECT  ?portfolioName ?symbol ?size ?price
 
@@ -172,14 +164,11 @@ WHERE {
   
   	?order prop:portfolio/prop:name ?portfolioName .
 
-
 }
 
 # 5 vyhledání všech transakcí s BTC/LTC a objemu větším než 1500
 
 PREFIX type: <http://kralst.cz/ontologies/type#>
-PREFIX tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#>
-PREFIX portfolio: <http://kralst.cz/ontologies/crypto/portfolio#>
 PREFIX prop: <http://kralst.cz/ontologies/prop#>
 
 SELECT  *
