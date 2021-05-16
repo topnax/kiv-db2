@@ -1,6 +1,5 @@
 @prefix portfolio: <http://kralst.cz/ontologies/crypto/portfolio#> .
 @prefix tradingPair: <http://kralst.cz/ontologies/crypto/tradingPair#> .
-@prefix portfolioEntry: <http://kralst.cz/ontologies/crypto/tradingPair#> .
 @prefix order: <http://kralst.cz/ontologies/crypto/order#> .
 @prefix prop: <http://kralst.cz/ontologies/prop#> .
 @prefix type: <http://kralst.cz/ontologies/type#> .

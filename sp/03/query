@@ -79,7 +79,7 @@ WHERE {
   
   FILTER (
   	?size > 0.010
-  ).
+  )
 }
 
 # 3 podmínka na existenci podřetězce v textové hodnotě;
@@ -102,17 +102,17 @@ WHERE {
 PREFIX type: <http://kralst.cz/ontologies/type#>
 PREFIX prop: <http://kralst.cz/ontologies/prop#>
 
-SELECT  ?name ?size ?symbol
+SELECT  ?portfolioName ?size ?symbol
 
 WHERE {
   	?order a type:Order .
   	?order prop:portfolio ?portfolio .
-  	?portfolio prop:name ?name .
-  	?order prop:tradingPair ?tradingPair .
-  	?tradingPair prop:symbol ?symbol .
+  	?portfolio prop:name ?portfolioName .
+  	?order prop:tradingPair/prop:symbol ?symbol .
   	?order prop:size ?size .
   	?order prop:sell true
 }
+
 
 # 6. property path - vyhledání všech nákupů v EUR
 
